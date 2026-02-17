@@ -25,3 +25,18 @@ Signed-By: /etc/apt/keyrings/docker.asc
 EOF
 RUN apt update && \
     apt install -y docker-ce-cli
+
+# bun
+USER vscode
+RUN curl -fsSL https://bun.com/install | bash
+USER root
+
+# node
+RUN apt-get install -y curl && \
+    curl -fsSL https://deb.nodesource.com/setup_24.x | sudo -E bash - && \
+    apt-get install -y nodejs && \
+    node -v
+
+# wrk
+RUN apt install -y wrk
+

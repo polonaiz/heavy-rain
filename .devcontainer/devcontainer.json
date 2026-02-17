@@ -26,7 +26,8 @@
 			"extensions": [
 				"mhutchie.git-graph",
 				"ms-vscode.makefile-tools",
-				"ms-azuretools.vscode-docker"
+				"ms-azuretools.vscode-docker",
+				"humao.rest-client"
 			]
 		}
 	}
