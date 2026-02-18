@@ -1,2 +1,47 @@
 ###
 GET http://localhost:3000
+
+
+### 로봇 목록
+GET http://localhost:3000/robots
+Content-Type: application/json
+Cache-Control: no-cache
+
+
+### 로봇 정보 등록
+POST http://localhost:3000/robots
+Content-Type: application/json
+
+{
+    "id": "r1",
+    "name": "robot-001-name",
+}
+
+### 로봇 삭제
+DELETE http://localhost:3000/robots/{robot_id}
+Content-Type: application/json
+
+
+### 로봇 상태 조회
+GET http://localhost:3000/robots/{robot_id}/status
+Content-Type: application/json
+Cache-Control: no-cache
+
+
+### 로봇 상태 등록
+POST http://localhost:3000/robots/{robot_id}/status
+Content-Type: application/json
+
+{
+    "robot_id": "robot-001",
+    "seq": 23131,
+    "robot_ts": 434242342,
+    "pos": {"x": 78.5, "y": 32.1},
+    "status":"RUNNING"
+}
+
+
+### 로봇 상태 히스토리 조회
+GET http://localhost:3000/robots/{robot_id}/status-history
+Content-Type: application/json
+Cache-Control: no-cache
