@@ -1,4 +1,9 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ClassSerializerInterceptor, UseInterceptors, NotFoundException, ConflictException } from '@nestjs/common';
+import { 
+  Controller, Get, Post, Patch, Delete, 
+  Param, Query, Body, 
+  ParseIntPipe,
+  NotFoundException, ConflictException, 
+} from '@nestjs/common';
 import { RobotsService } from './robots.service';
 import { CreateRobotDto } from './dto/create-robot.dto';
 import { UpdateRobotDto } from './dto/update-robot.dto';
@@ -80,17 +85,31 @@ export class RobotsController {
     @Param('id') id: string,
     @Body() robotStatusDto: RobotStatusDto,
   ) {
-    return await this.robotsService.createStatus(id, robotStatusDto)
+    const robotStatusDtoSaved = await this.robotsService.createStatus(id, robotStatusDto)
+    if (!robotStatusDtoSaved) {
+      throw new ConflictException(`FAILURE: cannot create RobotStatus: id='${id}', ts='${robotStatusDto.robot_ts}'`)
+    }
+    return robotStatusDtoSaved
   }
 
   @Get(':id/status')
-  async getStatusRecent(
+  async getStatus(
     @Param('id') id: string,
   ) {
-    const robotStatus = await this.robotsService.getStatusRecent(id)
+    const robotStatus = await this.robotsService.getStatus(id)
     if (!robotStatus) {
       throw new NotFoundException(`FAILURE: cannot find RobotStatus: id='${id}'`)
     }
     return robotStatus
+  }
+
+  @Get(':id/status-history')
+  async getStatusHistory(
+    @Param('id') id: string,
+    @Query('ts_beg', new ParseIntPipe({ optional: true })) tsBeg?: number,
+    @Query('ts_end', new ParseIntPipe({ optional: true })) tsEnd?: number,
+  ): Promise<RobotStatusDto[]> {
+    const robotStatuses = await this.robotsService.getStatusHistory(id, tsBeg, tsEnd)
+    return robotStatuses.map(RobotStatusDto.fromRobotStatus)
   }
 }

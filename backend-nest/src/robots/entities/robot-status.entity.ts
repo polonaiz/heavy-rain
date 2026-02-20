@@ -1,4 +1,4 @@
-import { Column, CreateDateColumn, Entity, Index, ObjectId, ObjectIdColumn, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, In, Index, ObjectId, ObjectIdColumn, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 
 @Entity('robotStatus')
 @Index(['robotId', 'robotTs'])
@@ -9,15 +9,25 @@ export class RobotStatus {
     @Column()
     robotId: string
 
-    @Column({ type: 'int' })
+    @Column()
     robotTs: number
+
+    @Column()
+    seq: number
+
+    @Column()
+    battery: number;
 
     @Column()
     pos: { x: number, y: number }
 
     @Column()
-    status: string
+    status: "RUNNING" | "STOPPED" | "ERROR";
 
-    @CreateDateColumn({ type: 'timestamp', nullable: false })
+    @Column()
+    telemetry: { vx: number, vy: number }
+
+    @CreateDateColumn()
+    @Index({ expireAfterSeconds: 24 * 3600 * 90 }) // TTL 인덱스 설정 (90일 후 자동 삭제)
     createdAt: Date
 }

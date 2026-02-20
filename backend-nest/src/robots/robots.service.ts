@@ -59,6 +59,7 @@ export class RobotsService {
     const robotStatus = new RobotStatus()
     robotStatus.robotId = id
     robotStatus.robotTs = robotStatusDto.robot_ts
+    robotStatus.seq = robotStatusDto.seq
     robotStatus.pos = robotStatusDto.pos
     robotStatus.status = robotStatusDto.status
     await this.robotStatusRepository.save(robotStatus)
@@ -66,7 +67,7 @@ export class RobotsService {
     return robotStatusDto
   }
 
-  async getStatusRecent(
+  async getStatus(
     id: string
   ): Promise<RobotStatusDto | null> {
     const statusRaws = await this.redis.zrevrange(`robots/${id}/statuses`, 0, 0)
@@ -74,5 +75,19 @@ export class RobotsService {
       return null
     }
     return JSON.parse(statusRaws[0]) as RobotStatusDto
+  }
+
+  async getStatusHistory(
+    id: string, tsBeg?: number, tsEnd?: number
+  ): Promise<RobotStatus[]> {
+    const where: any = {
+      robotId: id,
+      robotTs: {
+        $gte: tsBeg ?? 0,
+        $lt: tsEnd ?? Date.now(),
+      }
+    }
+    const robotStatuses = await this.robotStatusRepository.find({ where })
+    return robotStatuses
   }
 }

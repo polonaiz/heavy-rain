@@ -42,7 +42,7 @@ Content-Type: application/json
 
 {
     "seq": 23131,
-    "robot_ts": 1771504008435,
+    "robot_ts": {{$timestamp}}000,
     "pos": {"x": 78.5, "y": 32.1},
     "status":"RUNNING"
 }
@@ -56,5 +56,13 @@ Cache-Control: no-cache
 
 ### 로봇 상태 히스토리 조회
 GET http://localhost:3000/robots/robot-001/status-history
+Content-Type: application/json
+Cache-Control: no-cache
+
+### 로봇 상태 히스토리 조회 (범위)
+GET http://localhost:3000/robots/robot-001/status-history
+    ?ts_beg=1771582550000
+    &ts_end=1771582579000
+    
 Content-Type: application/json
 Cache-Control: no-cache
