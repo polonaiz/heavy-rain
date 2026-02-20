@@ -9,6 +9,11 @@ services:
 
   redis:
     image: redis:latest
+    ports:
+      - "6379:6379"
+    command: ["redis-server", "--requirepass", "redis_pass"]
+    environment:
+      TZ: Asia/Seoul
  
   postgres:
     image: postgres:latest
@@ -22,4 +27,10 @@ services:
       
   mongo:
     image: mongo:latest
-    
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: mongo_user
+      MONGO_INITDB_ROOT_PASSWORD: mongo_pass
+      MONGO_INITDB_DATABASE: DEV
+      TZ: Asia/Seoul

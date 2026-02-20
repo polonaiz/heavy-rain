@@ -18,6 +18,7 @@ export class RobotsController {
       return RobotResponseDto.fromRobot(robot)
     } catch (e) {
       if (e.code === '23505') {
+        // duplicate key value violates unique constraint "IX_ROBOT_ID"
         throw new ConflictException(`FAILURE: Robot with id='${createRobotDto.id}' already exists.`)
       }
       throw e

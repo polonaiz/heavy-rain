@@ -12,6 +12,7 @@ import { RedisModule } from '@songkeys/nestjs-redis';
 
     //
     TypeOrmModule.forRootAsync({
+      name: 'postgresConnection',
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
         type: 'postgres',
@@ -34,6 +35,24 @@ import { RedisModule } from '@songkeys/nestjs-redis';
           port: configService.get<number>('REDIS_PORT'),
           password: configService.get<string>('REDIS_PASSWORD')
         }
+      }),
+    }),
+    TypeOrmModule.forRootAsync({
+      name: 'mongodbConnection',
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        type: 'mongodb',
+        // url: `mongodb://${configService.get<string>('MONGO_HOST')}:${configService.get<number>('MONGO_PORT')}/${configService.get<string>('MONGO_DATABASE')}?authSource=admin`,
+        host: configService.get<string>('MONGO_HOST'),
+        port: configService.get<number>('MONGO_PORT'),
+        username: configService.get<string>('MONGO_USERNAME'),
+        password: configService.get<string>('MONGO_PASSWORD'),
+        database: configService.get<string>('MONGO_DATABASE'),
+        authSource: 'admin',
+
+        autoLoadEntities: true,
+        synchronize: true, // 개발 환경에서만 사용, 운영 환경에서는 false로 설정
+        logging: true,
       }),
     }),
 

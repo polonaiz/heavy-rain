@@ -7,12 +7,14 @@ import { Robot } from './entities/robot.entity';
 import { InjectRedis } from '@songkeys/nestjs-redis';
 import Redis from 'ioredis';
 import { RobotStatusDto } from './dto/robot-status.dto';
+import { RobotStatus } from './entities/robot-status.entity';
 
 @Injectable()
 export class RobotsService {
   constructor(
-    @InjectRepository(Robot) private readonly robotRepository: Repository<Robot>,
+    @InjectRepository(Robot, 'postgresConnection') private readonly robotRepository: Repository<Robot>,
     @InjectRedis() private readonly redis: Redis,
+    @InjectRepository(RobotStatus, 'mongodbConnection') private readonly robotStatusRepository: Repository<RobotStatus>
   ) { }
 
   async create(createRobotDto: CreateRobotDto): Promise<Robot> {
@@ -52,6 +54,15 @@ export class RobotsService {
     if (!result) {
       return null
     }
+
+    // save to mongodb for backup
+    const robotStatus = new RobotStatus()
+    robotStatus.robotId = id
+    robotStatus.robotTs = robotStatusDto.robot_ts
+    robotStatus.pos = robotStatusDto.pos
+    robotStatus.status = robotStatusDto.status
+    await this.robotStatusRepository.save(robotStatus)
+
     return robotStatusDto
   }
 
